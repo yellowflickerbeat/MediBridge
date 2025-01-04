@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Nearest Hospitals</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Find Nearest Hospitals</h1>
+    <p>Click the button below to find the nearest hospitals on OpenStreetMap.</p>
+    <button id="find-hospitals">Find Hospitals</button>
+
+    <script>
+        document.getElementById('find-hospitals').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const { latitude, longitude } = position.coords;
+                    const query = `https://www.openstreetmap.org/search?query=hospitals&map=14/${latitude}/${longitude}`;
+                    window.open(query, '_blank');
+                }, (error) => {
+                    alert('Unable to retrieve your location. Please ensure location services are enabled.');
+                });
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+    </script>
+</body>
+</html>
