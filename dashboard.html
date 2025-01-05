@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Medical Records Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Medical Records Dashboard</h1>
+            <div id="patientInfo"></div>
+        </div>
+
+        <!-- Medical Record Form -->
+        <div class="card">
+            <h2>Add/Edit Medical Record</h2>
+            <form id="recordForm">
+                <input type="hidden" id="recordId">
+                <div class="form-group">
+                    <label for="recordType">Record Type</label>
+                    <select id="recordType" required>
+                        <option value="Condition">Condition</option>
+                        <option value="Observation">Observation</option>
+                        <option value="Procedure">Procedure</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recordDate">Date</label>
+                    <input type="date" id="recordDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="recordDescription">Description</label>
+                    <textarea id="recordDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="documentFile">Attach Document</label>
+                    <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+                <div id="documentPreview"></div>
+                <button type="submit" id="submitBtn">Add Record</button>
+                <button type="button" onclick="resetForm('recordForm')">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Medication Form -->
+        <div class="card">
+            <h2>Add/Edit Medication</h2>
+            <form id="medicationForm">
+                <input type="hidden" id="medicationId">
+                <div class="form-group">
+                    <label for="medicationName">Medication Name</label>
+                    <input type="text" id="medicationName" required>
+                </div>
+                <div class="form-group">
+                    <label for="dosage">Dosage</label>
+                    <input type="text" id="dosage" required>
+                </div>
+                <div class="form-group">
+                    <label for="frequency">Frequency</label>
+                    <input type="text" id="frequency" required placeholder="e.g., Once daily, Twice daily">
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="isActive" checked>
+                        <label for="isActive">Currently Active</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reason">Reason for Medication</label>
+                    <textarea id="reason" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prescriber">Prescriber</label>
+                    <input type="text" id="prescriber">
+                </div>
+                <button type="submit" id="medicationSubmitBtn">Add Medication</button>
+                <button type="button" onclick="resetForm('medicationForm')">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Display Sections -->
+        <div class="card">
+            <h2>Active Medications</h2>
+            <div id="activeMedicationsList" class="records-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>Medication History</h2>
+            <div id="medicationHistoryList" class="records-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>Medical Records</h2>
+            <div id="recordsList" class="records-list"></div>
+        </div>
+    </div>
+
+    <script src="medical-dashboard-js"></script>
+</body>
+</html>
