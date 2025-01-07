@@ -5,118 +5,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediBridge</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script>
+        // Redirect function
+        document.addEventListener("DOMContentLoaded", function() {
+            const button = document.getElementById("find-hospital");
+            button.addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "locator.html";
+            });
+        });
+    </script>
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import {
+            GoogleAuthProvider,
+            signInWithPopup,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const googleButton = document.getElementById("google-signin");
+            googleButton.addEventListener("click", async () => {
+                const provider = new GoogleAuthProvider();
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    console.log("Google Sign-In successful:", result.user);
+                    alert(`Welcome ${result.user.displayName}`);
+                    window.location.href = "dashboard.html";
+                } catch (error) {
+                    console.error("Google Sign-In error:", error);
+                    alert(`Google Sign-In failed: ${error.message}`);
+                }
+            });
+
+
+            const signupForm = document.getElementById("signupForm");
+            signupForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    console.log("Sign-Up successful:", userCredential.user);
+                    alert("Account created successfully!");
+                    window.location.href = "welcome.html";
+                } catch (error) {
+                    console.error("Sign-Up error:", error);
+                    alert(`Sign-Up failed: ${error.message}`);
+                }
+            });
+
+            const signinButton = document.getElementById("signin-button");
+            signinButton.addEventListener("click", async () => {
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    console.log("Sign-In successful:", userCredential.user);
+                    alert("Signed in successfully!");
+                    window.location.href = "dashboard.html";
+                } catch (error) {
+                    console.error("Sign-In error:", error);
+                    alert(`Sign-In failed: ${error.message}`);
+                }
+            });
+        });
+    </script>
+    <style>
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-secondary, .button-google, button[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .button-secondary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .button-google {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+
+        .button-google img {
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <nav class="nav-links">
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Contact</a>
-        </nav>
-        
         <div class="form-section">
+            <nav class="nav-links">
+                <button id="find-hospital">Find Nearest Hospital</button>
+            </nav>
+            
             <div class="logo">
                 <img src="logo-full.svg" alt="MediBridge Logo">
-                <span></span>
             </div>
 
-            <h1>Hi there, ....</h1>
-            <p class="subtitle">Get Started with Appointments.</p>
+            <h1>Welcome to MediBridge</h1>
+            <p class="subtitle">Bridging gaps in healthcare</p>
 
-            <!-- Updated Form with onSubmit handler -->
-            <form id="signupForm" onSubmit="handleSignUp(event)">
+            <form id="signupForm">
                 <div class="form-group">
-                    <label>Full name</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input id="full-name" type="text" placeholder="Enter your name" required>
-                    </div>
+                    <label>Email Address</label>
+                    <input id="email" type="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="password" type="password" placeholder="Enter your password" required>
                 </div>
 
-                <div class="form-group">
-                    <label>Email address</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input id="email" type="email" placeholder="Enter your email" required>
-                    </div>
+                <div class="button-row">
+                    <button type="submit">Sign Up</button>
+                    <button id="signin-button" class="button-secondary">Sign In</button>
+                    <button id="google-signin" class="button-google">
+                        <img src="https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business-thumbnail.png"  alt="Google Logo">
+                        Sign In with Google
+                    </button>
                 </div>
-
-
-                <div class="form-group">
-                    <label>Phone number</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-phone"></i>
-                        <input id="phone" type="tel" placeholder="Enter your phone no" required>
-                    </div>
-                </div>
-
-                <button type="submit">Get Started</button>
             </form>
 
             <p class="copyright">@2025 MediBridge</p>
         </div>
 
         <div class="image-section">
-            <img src="onboarding-img.png">
+            <img src="onboarding-img.png" alt="Onboarding">
         </div>
     </div>
-
-    <!-- Firebase Configuration and Script -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC_K8OpaHkoSzha3pLI03Tu6sZ190p_z2o",
-            authDomain: "medibridge-loginpage.firebaseapp.com",
-            projectId: "medibridge-loginpage",
-            storageBucket: "medibridge-loginpage.firebasestorage.app",
-            messagingSenderId: "840197772490",
-            appId: "1:840197772490:web:3522fefffe6414fc6ad033"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Handle form submission and sign-up logic
-        function handleSignUp(event) {
-            event.preventDefault();  // Prevent form from refreshing the page
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const phone = document.getElementById('phone').value;
-
-            // Firebase Auth - Create a new user
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // User signed up successfully
-                    const user = userCredential.user;
-                    console.log('User created: ', user);
-
-                    // Optionally store additional info in Firestore
-                    db.collection('users').doc(user.uid).set({
-                        fullName: document.getElementById('full-name').value,
-                        phoneNumber: phone
-                    })
-                    .then(() => {
-                        console.log("User info saved to Firestore!");
-                        window.location.href = '/dashboard';  // Redirect after successful signup
-                    })
-                    .catch((error) => {
-                        console.error("Error saving user info: ", error);
-                    });
-
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert(errorMessage);  // Show error message if signup fails
-                });
-        }
-    </script>
 </body>
 </html>
