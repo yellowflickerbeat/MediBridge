@@ -1,0 +1,101 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+/* Form Styles */
+.form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.form input, .form textarea, .form select, .form button {
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Records List */
+.records-list {
+    margin-top: 20px;
+}
+
+.record-item {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    animation: highlightNew 2s ease-out;
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.record-title {
+    font-weight: bold;
+}
+
+.record-content {
+    margin-top: 10px;
+}
+
+.action-buttons {
+    margin-top: 10px;
+}
+
+.action-buttons button {
+    margin-right: 5px;
+}
+
+/* Animation */
+@keyframes highlightNew {
+    0% {
+        background-color: #fff3cd;
+    }
+    100% {
+        background-color: #f8f9fa;
+    }
+}
+
+/* Document Preview */
+.document-preview {
+    max-width: 100px;
+    margin-top: 10px;
+}
