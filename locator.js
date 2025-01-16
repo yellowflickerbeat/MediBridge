@@ -16,6 +16,11 @@ if (navigator.geolocation) {
         L.marker([userLat, userLon]).addTo(map)
             .bindPopup("You are here").openPopup();
 
+        // Function to create Google Maps navigation URL
+        function createGoogleMapsUrl(destLat, destLon) {
+            return `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLon}&destination=${destLat},${destLon}&travelmode=driving`;
+        }
+
         // Fetch nearby hospitals using Overpass API
         const overpassUrl = `https://overpass-api.de/api/interpreter?data=[out:json];node["amenity"="hospital"](around:5000,${userLat},${userLon});out;`;
 
@@ -25,8 +30,21 @@ if (navigator.geolocation) {
                 data.elements.forEach(hospital => {
                     const lat = hospital.lat;
                     const lon = hospital.lon;
-                    L.marker([lat, lon]).addTo(map)
-                        .bindPopup(hospital.tags.name || "Hospital");
+                    const hospitalName = hospital.tags.name || "Hospital";
+                    
+                    // Create marker with custom popup content including a navigation button
+                    const marker = L.marker([lat, lon]).addTo(map);
+                    const popupContent = `
+                        <div>
+                            <h3>${hospitalName}</h3>
+                            <button onclick="window.open('${createGoogleMapsUrl(lat, lon)}', '_blank')" 
+                                    style="padding: 8px; background-color: #4CAF50; color: white; border: none; 
+                                           border-radius: 4px; cursor: pointer; margin-top: 5px;">
+                                Get Directions
+                            </button>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
                 });
             })
             .catch(error => {
