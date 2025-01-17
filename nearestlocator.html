@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Locator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=location_on" />
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .nav-links {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            gap: 24px;
+            z-index: 1000;  /* Added to ensure button appears above map */
+        }
+
+        button#more-hospital {
+            background-color:cornflowerblue;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;  /* Added for better appearance */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);  /* Added for better appearance */
+            transition: background-color 0.3s;  /* Added for hover effect */
+        }
+
+        button#more-hospital:hover {
+            background-color: #45a049;  /* Added for hover effect */
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2ea884;
+        }
+
+        #map {
+            flex: 1;
+        }
+
+        #sidebar {
+            width: 300px;
+            background-color: #f9f9f9;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+            padding: 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #sidebar h2 {
+            font-size: 18px;
+            margin: 0 0 10px;
+        }
+
+        .hospital-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .hospital-item:hover {
+            background-color: #e7f3ff;
+        }
+
+        .hospital-item h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .hospital-item p {
+            margin: 5px 0;
+        }
+
+        .hospital-item button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button#home-button {
+        background-color: #2196F3;  /* Blue color for distinction */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: background-color 0.3s;
+        }   
+
+        button#home-button:hover {
+        background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-links">
+        <button id="home-button">Home</button>
+        <button id="more-hospital">Show More</button>
+        <script>
+            document.getElementById("more-hospital").addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "locator.html";
+            });
+        </script>
+    </nav>
+    <div id="sidebar">
+        <h2>Nearest Hospitals</h2>
+        <div id="hospital-list"></div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="nearestlocator.js"></script>
+</body>
+</html>
