@@ -3,96 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Appointment Scheduler</title>
-    <style>
-        /* All your existing CSS stays the same */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* ... rest of your existing CSS ... */
-
-        /* Add a loading spinner style */
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .error-message {
-            color: red;
-            padding: 10px;
-            border: 1px solid red;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-    </style>
+    <title>Doctor Appointment Scheduler</title>
+    <link rel="stylesheet" href="appointment.css">
 </head>
 <body>
     <div class="container">
-        <h1>Find and Book Healthcare Appointments</h1>
-        
-        <div class="search-section">
-            <div class="form-group">
-                <label for="specialty">Specialty</label>
-                <select id="specialty">
-                    <option value="">Select a specialty</option>
-                    <option value="primary-care">Primary Care</option>
-                    <option value="dentist">Dentist</option>
-                    <option value="dermatologist">Dermatologist</option>
-                    <option value="psychiatrist">Psychiatrist</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="location">Location</label>
-                <input type="text" id="location" placeholder="Enter zip code or city">
-            </div>
-
-            <div class="form-group">
-                <label for="insurance">Insurance</label>
-                <select id="insurance">
-                    <option value="">Select insurance</option>
-                    <option value="aetna">Aetna</option>
-                    <option value="bluecross">Blue Cross Blue Shield</option>
-                    <option value="cigna">Cigna</option>
-                    <option value="united">United Healthcare</option>
-                </select>
-            </div>
-
-            <!-- Changed onclick to handleSearch -->
-            <button onclick="handleSearch()">Search Available Doctors</button>
+        <h1>Schedule an Appointment</h1>
+        <div class="form-group">
+            <label for="specialty">Select Specialty:</label>
+            <select id="specialty">
+                <option value="">Select a specialty...</option>
+            </select>
         </div>
-
-        <div class="results-section" id="results"></div>
+        
+        <div class="form-group">
+            <label for="doctor">Select Doctor:</label>
+            <select id="doctor">
+                <option value="">Select a doctor...</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date">
+        </div>
+        
+        <div class="form-group">
+            <label>Available Time Slots:</label>
+            <div class="time-slots" id="timeSlots"></div>
+        </div>
+        
+        <button class="button" id="scheduleButton">Schedule Appointment</button>
     </div>
-
-    <!-- Note the type="module" attribute -->
-    <script type="module">
-        // Import functions from app.js
-        import { handleSearch, handleBooking, displayResults } from './app.js';
-
-        // Make functions available globally for HTML onclick attributes
-        window.handleSearch = handleSearch;
-        window.handleBooking = handleBooking;
-        window.displayResults = displayResults;
-    </script>
+    <script src="appointment.js"></script>
 </body>
 </html>

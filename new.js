@@ -82,7 +82,7 @@ async function handleMedicationSubmit(event) {
         dosage: document.getElementById('dosage').value,
         frequency: document.getElementById('frequency').value,
         startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value || null,
+        endDate: document.getElementById('endDate').value,
         isActive: document.getElementById('isActive').checked,
         reason: document.getElementById('reason').value,
         prescriber: document.getElementById('prescriber').value,
@@ -103,24 +103,24 @@ async function handleMedicationSubmit(event) {
 // ... (keep all previous code up until fetchMedications function)
 
 // Updated fetchMedications function with date-based filtering
-function fetchMedications() {
+function fetchMedicationsAndRecords() {
     const activeMedicationsList = document.getElementById('activeMedicationsList');
     const medicationHistoryList = document.getElementById('medicationHistoryList');
     
     activeMedicationsList.innerHTML = '';
     medicationHistoryList.innerHTML = '';
-    
-    dashboard_db.child('medications').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            const medications = snapshot.val();
-            const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+    // Fetch medications
+    dashboard_db.child('medications').on('value', (medicationSnapshot) => {
+        if (medicationSnapshot.exists()) {
+            const medications = medicationSnapshot.val();
+            const currentDate = new Date().toISOString().split('T')[0];
             
             Object.entries(medications).forEach(([key, medication]) => {
                 const div = document.createElement('div');
                 div.className = 'medication-card';
                 div.setAttribute('data-medication-id', key);
-                
-                // Check if medication is active based on end date
+
                 const isActive = medication.isActive && 
                                (!medication.endDate || medication.endDate >= currentDate);
                 
@@ -138,27 +138,76 @@ function fetchMedications() {
                     </div>
                 `;
                 
-                // Add to appropriate list based on active status
                 if (isActive) {
                     activeMedicationsList.appendChild(div.cloneNode(true));
                 } else {
                     medicationHistoryList.appendChild(div.cloneNode(true));
                 }
             });
+        }
+    });
 
-            // Add "No medications" message if lists are empty
-            if (activeMedicationsList.children.length === 0) {
-                activeMedicationsList.innerHTML = '<p>No active medications found.</p>';
-            }
-            if (medicationHistoryList.children.length === 0) {
-                medicationHistoryList.innerHTML = '<p>No medication history found.</p>';
-            }
-        } else {
-            activeMedicationsList.innerHTML = '<p>No active medications found.</p>';
-            medicationHistoryList.innerHTML = '<p>No medication history found.</p>';
+    // Fetch medical records and add to the active medications list
+    dashboard_db.child('medicalRecords').on('value', (recordSnapshot) => {
+        if (recordSnapshot.exists()) {
+            const records = recordSnapshot.val();
+            
+            Object.entries(records).forEach(([key, record]) => {
+                const div = document.createElement('div');
+                div.className = 'record-card';
+                div.setAttribute('data-record-id', key);
+
+                const recordDate = record.recordDate || 
+                                 record.onsetDateTime || 
+                                 record.performedDateTime || 
+                                 record.effectiveDateTime;
+
+                div.innerHTML = `
+                    <h3>${record.recordType}</h3>
+                    <p><strong>Description:</strong> ${record.recordDescription || record.code?.text || 'N/A'}</p>
+                    <p><strong>Date:</strong> ${formatDate(recordDate)}</p>
+                    ${record.documentName ? `<p><strong>Document:</strong> ${record.documentName}</p>` : ''}
+                    <div class="action-buttons">
+                        <button onclick="editRecord('${key}')" class="edit-btn">Edit</button>
+                        <button onclick="deleteRecord('${key}')" class="delete-btn">Delete</button>
+                    </div>
+                `;
+                
+                activeMedicationsList.appendChild(div);
+            });
         }
     });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize form submissions
+    const recordForm = document.getElementById('recordForm');
+    const medicationForm = document.getElementById('medicationForm');
+    
+    if (recordForm) {
+        recordForm.addEventListener('submit', handleRecordSubmit);
+    }
+    
+    if (medicationForm) {
+        medicationForm.addEventListener('submit', handleMedicationSubmit);
+    }
+    
+    // Fetch medications and records
+    fetchMedicationsAndRecords();
+    
+    // Handle isActive checkbox changes
+    const isActiveCheckbox = document.getElementById('isActive');
+    const endDateInput = document.getElementById('endDate');
+    if (isActiveCheckbox && endDateInput) {
+        isActiveCheckbox.addEventListener('change', function() {
+            endDateInput.disabled = this.checked;
+            if (this.checked) {
+                endDateInput.value = '';
+            }
+        });
+        endDateInput.disabled = isActiveCheckbox.checked;
+    }
+});
+
 
 // Add helper function to format dates
 function formatDate(dateString) {
@@ -172,55 +221,7 @@ function formatDate(dateString) {
 }
 
 // Update fetchMedicalRecords function to show records in chronological order
-function fetchMedicalRecords() {
-    const recordsList = document.getElementById('recordsList');
-    recordsList.innerHTML = '';
-    
-    dashboard_db.child('medicalRecords').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            const records = snapshot.val();
-            // Convert to array and sort by date
-            const sortedRecords = Object.entries(records)
-                .map(([key, record]) => ({...record, id: key}))
-                .sort((a, b) => {
-                    const dateA = new Date(a.recordDate || a.onsetDateTime || a.performedDateTime || a.effectiveDateTime);
-                    const dateB = new Date(b.recordDate || b.onsetDateTime || b.performedDateTime || b.effectiveDateTime);
-                    return dateB - dateA; // Most recent first
-                });
 
-            sortedRecords.forEach(record => {
-                const div = document.createElement('div');
-                div.className = 'record-item';
-                div.setAttribute('data-record-id', record.id);
-                
-                const recordDate = record.recordDate || 
-                                 record.onsetDateTime || 
-                                 record.performedDateTime || 
-                                 record.effectiveDateTime;
-
-                div.innerHTML = `
-                    <div class="record-header">
-                        <span class="record-title">${record.recordType}</span>
-                        <span class="record-date">${formatDate(recordDate)}</span>
-                    </div>
-                    <div class="record-content">
-                        ${record.recordDescription || record.code?.text || ''}
-                        ${record.documentName ? `<p><strong>Attached Document:</strong> ${record.documentName}</p>` : ''}
-                    </div>
-                    <div class="record-footer">
-                        <div class="action-buttons">
-                            <button onclick="editRecord('${record.id}')" class="edit-btn">Edit</button>
-                            <button onclick="deleteRecord('${record.id}')" class="delete-btn">Delete</button>
-                        </div>
-                    </div>
-                `;
-                recordsList.appendChild(div);
-            });
-        } else {
-            recordsList.innerHTML = '<p>No medical records found.</p>';
-        }
-    });
-}
 // Add these utility functions
 function resetForm(formId) {
     const form = document.getElementById(formId);
@@ -240,80 +241,7 @@ function resetForm(formId) {
 }
 
 // Add edit record functionality
-async function editRecord(recordId) {
-    currentEditId = recordId;
-    
-    // Fetch the record data
-    const recordRef = dashboard_db.child('medicalRecords').child(recordId);
-    recordRef.once('value', (snapshot) => {
-        if (snapshot.exists()) {
-            const record = snapshot.val();
-            
-            // Populate the form
-            document.getElementById('recordType').value = record.recordType;
-            document.getElementById('recordDate').value = record.recordDate;
-            document.getElementById('recordDescription').value = record.recordDescription;
-            
-            // Scroll to the form
-            document.getElementById('recordForm').scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-}
 
-// Add delete record functionality
-async function deleteRecord(recordId) {
-    if (confirm('Are you sure you want to delete this record?')) {
-        try {
-            await dashboard_db.child('medicalRecords').child(recordId).remove();
-            alert('Record deleted successfully');
-        } catch (error) {
-            console.error('Error deleting record:', error);
-            alert('Error deleting record');
-        }
-    }
-}
-
-// Add edit medication functionality
-async function editMedication(medicationId) {
-    const medicationRef = dashboard_db.child('medications').child(medicationId);
-    medicationRef.once('value', (snapshot) => {
-        if (snapshot.exists()) {
-            const medication = snapshot.val();
-            
-            // Populate the form
-            document.getElementById('medicationName').value = medication.medicationName;
-            document.getElementById('dosage').value = medication.dosage;
-            document.getElementById('frequency').value = medication.frequency;
-            document.getElementById('startDate').value = medication.startDate;
-            document.getElementById('endDate').value = medication.endDate || '';
-            document.getElementById('isActive').checked = medication.isActive;
-            document.getElementById('reason').value = medication.reason || '';
-            document.getElementById('prescriber').value = medication.prescriber || '';
-            
-            // Update end date input state
-            document.getElementById('endDate').disabled = medication.isActive;
-            
-            // Store the current medication ID for updating
-            currentEditId = medicationId;
-            
-            // Scroll to the form
-            document.getElementById('medicationForm').scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-}
-
-// Add delete medication functionality
-async function deleteMedication(medicationId) {
-    if (confirm('Are you sure you want to delete this medication?')) {
-        try {
-            await dashboard_db.child('medications').child(medicationId).remove();
-            alert('Medication deleted successfully');
-        } catch (error) {
-            console.error('Error deleting medication:', error);
-            alert('Error deleting medication');
-        }
-    }
-}
 
 // Add this to your DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', function() {
@@ -328,10 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (medicationForm) {
         medicationForm.addEventListener('submit', handleMedicationSubmit);
     }
-    
-    // Initialize data fetching
-    fetchMedicalRecords();
-    fetchMedications();
     
     // Add automatic end date disabling when isActive is checked
     const isActiveCheckbox = document.getElementById('isActive');
