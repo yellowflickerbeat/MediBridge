@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Appointment Scheduler</title>
     <link rel="stylesheet" href="appointment.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script>
+        // Redirect function
+        document.addEventListener("DOMContentLoaded", function() {
+            const button = document.getElementById("find-hospital");
+            button.addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "nearestlocator.html";
+            });
+        });
+    </script>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="schedulling.html">Book an Appointment</a></li>
+                <li><a href="dashboard.html">Medical Records</a></li>
+                <nav class="nav-links">
+                <button id="find-hospital">Find Nearest Hospital</button>
+                </nav>
+            </ul>
+        </nav>
+    </header><br><br><br>
     <div class="container">
         <h1>Schedule an Appointment</h1>
         <div class="form-group">

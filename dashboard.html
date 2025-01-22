@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FHIR Medical Records Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script>
+        // Redirect function
+        document.addEventListener("DOMContentLoaded", function() {
+            const button = document.getElementById("find-hospital");
+            button.addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "nearestlocator.html";
+            });
+        });
+    </script>
+    
+
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="schedulling.html">Book an Appointment</a></li>
+                <li><a href="dashboard.html">Medical Records</a></li>
+                <nav class="nav-links">
+                <button id="find-hospital">Find Nearest Hospital</button>
+                </nav>
+            </ul>
+        </nav>
+    </header>
+
     <div class="container">
         <div class="header">
             <h1>Medical Records Dashboard</h1>
@@ -40,7 +67,8 @@
                     <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png">
                 </div>
                 <div id="documentPreview"></div>
-                <button type="submit" id="submitBtn">Add Record</button>
+                
+                <button type="submit" id="submitBtn">Save Record</button>
                 <button type="button" onclick="resetForm('recordForm')">Cancel</button>
             </form>
         </div>
@@ -60,7 +88,10 @@
                 </div>
                 <div class="form-group">
                     <label for="frequency">Frequency</label>
-                    <input type="text" id="frequency" required placeholder="e.g., Once daily, Twice daily">
+                    <div class="frequency-input">
+                        <input type="number" id="frequencyNumber" min="1" required>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="startDate">Start Date</label>
@@ -87,23 +118,29 @@
             </form>
         </div>
 
+        <div id="recordsList"></div>
+
+
         <!-- Display Sections -->
         <div class="card">
             <h2>Active Medications</h2>
-            <div id="activeMedicationsList" class="records-list"></div>
+            <div id="medicalRecordsContainer" class="records-list"></div>
         </div>
 
         <div class="card">
             <h2>Medication History</h2>
-            <div id="medicationHistoryList" class="records-list"></div>
+            <div id="medicationHistoryContainer" class="records-list"></div>
         </div>
 
         <div class="card">
             <h2>Medical Records</h2>
-            <div id="recordsList" class="records-list"></div>
+            <div id="activeMedicationsContainer" class="records-list"></div>
         </div>
+        <div id="savedDocumentDetails"></div>
     </div>
 
-    <script src="medical-dashboard-js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="new.js"></script>
 </body>
 </html>

@@ -12,8 +12,13 @@ if (navigator.geolocation) {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add marker for user's location
-        L.marker([userLat, userLon]).addTo(map)
+        const redIcon = L.divIcon({
+            html: `<div style="background-color: red; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>`,
+            className: 'user-location-marker',
+            iconSize: [16, 16]
+        });
+
+        L.marker([userLat, userLon], { icon: redIcon }).addTo(map)
             .bindPopup("You are here").openPopup();
 
         // Function to create Google Maps navigation URL
