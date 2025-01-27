@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Locator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="locator.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=location_on" />
+    <style>
+        
+    </style>
+</head>
+<body>
+    <nav class="nav-links">
+        <button id="more-hospital">Show More</button>
+        <script>
+            document.getElementById("more-hospital").addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "locator.html";
+            });
+        </script>
+    </nav>
+    <div id="sidebar">
+        <h2>Nearest Hospitals</h2>
+        <div id="hospital-list"></div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="nearestlocator.js"></script>
+</body>
+</html>

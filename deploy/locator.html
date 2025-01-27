@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Locator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="locator.css" />
+    <style>
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-links">
+        <button id="more-hospital">Find Nearest Hospital</button>
+        <script>
+            document.getElementById("more-hospital").addEventListener("click", function() {
+                // Redirect to another HTML file
+                window.location.href = "nearestlocator.html";
+            });
+        </script>
+    </nav>
+    
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvQebzHO_agaA0jalLTVVuyZ7W-eyT2ss&libraries=places"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="locator.js"></script>
+</body>
+</html>
